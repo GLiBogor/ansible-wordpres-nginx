@@ -1,0 +1,21 @@
+---
+- name: Update apt cache
+  apt: update_cache=yes cache_valid_time=3600
+  sudo: yes
+
+- name: Install nginx
+  apt: name={{ item }} state=present
+  sudo: yes
+  with_items:
+    - nginx
+  notify: restart nginx
+
+- name: Remove default configuration nginx
+  file: path=/etc/nginx/sites-enabled/default state=absent
+  notify: restart nginx
+  sudo: yes
+
+- name: Copy nginx configuration for wordpress
+  template: src=default.conf dest=/etc/nginx/conf.d/default.conf
+  notify: restart nginx
+  sudo: yes

@@ -1,0 +1,25 @@
+---
+- name: Update apt cache
+  apt: update_cache=yes cache_valid_time=3600
+  sudo: yes
+
+- name: Install required software
+  apt: name={{ item }} state=present
+  sudo: yes
+  with_items:
+    - php5-mysql
+    - php5
+    - php5-fpm
+    - php5-xmlrpc
+    - php5-mcrypt
+    - python-mysqldb
+
+- name: Set maximum process manager children
+  sudo: yes
+  lineinfile: destfile=/etc/php5/fpm/pool.d/www.conf regexp="^pm.max_children" line="pm.max_children = 10" state=present
+
+- name: Set number children requests
+  sudo: yes
+  replace: destfile=/etc/php5/fpm/pool.d/www.conf regexp="^;pm.max_requests = 500" replace="pm.max_requests = 500"
+  notify: restart php5-fpm
+

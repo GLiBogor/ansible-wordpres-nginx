@@ -1,0 +1,8 @@
+- hosts: wp
+
+  roles:
+    - server
+    - nginx
+    - php5-fpm
+    - mysql
+    - wordpress
